@@ -1,0 +1,1691 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trip Monitor — Ярославль</title>
+
+  <style>
+    /* =========================
+       ОСНОВНЫЕ НАСТРОЙКИ
+       ========================= */
+    :root {
+      --bg: #0f0f0f;
+      --surface: #171717;
+      --surface-soft: #1d1d1d;
+      --surface-hover: #222222;
+      --text: #f5f5f4;
+      --muted: #9b9b96;
+      --border: #2a2a28;
+      --accent: #6ea8ff;
+      --accent-soft: #17263d;
+      --green: #56c596;
+      --green-soft: #10261d;
+      --orange: #e6a34a;
+      --orange-soft: #2b2112;
+      --danger: #ff8585;
+      --danger-soft: #2b1616;
+      --shadow: 0 12px 40px rgba(0,0,0,.24);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family:
+        Inter,
+        ui-sans-serif,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+      line-height: 1.5;
+    }
+
+    button,
+    a {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .container {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    /* =========================
+       ВЕРХНЯЯ ПАНЕЛЬ
+       ========================= */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(247,247,245,.88);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(232,232,228,.9);
+    }
+
+    .topbar-inner {
+      min-height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 750;
+      letter-spacing: -.02em;
+    }
+
+    .brand-icon {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      background: #111;
+      color: #fff;
+      font-size: 17px;
+    }
+
+    .nav {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .nav button {
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      padding: 8px 12px;
+      border-radius: 9px;
+    }
+
+    .nav button:hover {
+      background: #ecece8;
+      color: var(--text);
+    }
+
+    /* =========================
+       HERO
+       ========================= */
+    .hero {
+      padding: 62px 0 34px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 14px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 0 5px var(--green-soft);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(38px, 6vw, 64px);
+      line-height: .98;
+      letter-spacing: -.055em;
+      max-width: 900px;
+    }
+
+    .hero-text {
+      max-width: 700px;
+      margin: 20px 0 0;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .hero-grid {
+      margin-top: 32px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .stat {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+
+    .stat-value {
+      font-size: 22px;
+      font-weight: 750;
+      letter-spacing: -.03em;
+    }
+
+    /* =========================
+       ПАНЕЛЬ УПРАВЛЕНИЯ
+       ========================= */
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 10px 0 18px;
+    }
+
+    .controls-left,
+    .controls-right {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      border-radius: 999px;
+      padding: 9px 13px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .select {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      border-radius: 11px;
+      padding: 10px 13px;
+      color: var(--text);
+      outline: none;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      min-height: 42px;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      background: var(--surface);
+      color: var(--text);
+      text-decoration: none;
+      transition: .18s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(0,0,0,.07);
+    }
+
+    .btn-primary {
+      background: #111;
+      border-color: #111;
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: #262626;
+    }
+
+    /* =========================
+       КАРТОЧКИ СМЕТ
+       ========================= */
+    .estimates {
+      display: grid;
+      gap: 14px;
+      padding-bottom: 60px;
+    }
+
+    .estimate {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: 0 4px 18px rgba(0,0,0,.025);
+      overflow: hidden;
+      transition: .2s ease;
+    }
+
+    .estimate:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
+
+    .estimate.best {
+      border-color: rgba(35,131,226,.45);
+      box-shadow: 0 8px 30px rgba(35,131,226,.10);
+    }
+
+    .estimate-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 22px 22px 17px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .estimate-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 44px;
+      height: 30px;
+      padding: 0 10px;
+      border-radius: 999px;
+      background: #f1f1ef;
+      color: #4f4f4f;
+      font-size: 13px;
+      font-weight: 750;
+      margin-bottom: 10px;
+    }
+
+    .best .estimate-number {
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .estimate-title {
+      margin: 0;
+      font-size: 20px;
+      letter-spacing: -.025em;
+    }
+
+    .estimate-subtitle {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .total {
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .total-label {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 3px;
+    }
+
+    .total-value {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -.04em;
+    }
+
+    .estimate-body {
+      padding: 16px 22px 22px;
+    }
+
+    .items {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .item {
+      border: 1px solid var(--border);
+      background: var(--surface-soft);
+      border-radius: 14px;
+      padding: 14px;
+    }
+
+    .item-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .item-title {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .item-value {
+      font-size: 17px;
+      font-weight: 750;
+      letter-spacing: -.02em;
+    }
+
+    .item-meta {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    .item.sad {
+      background: var(--danger-soft);
+      border-color: #f1d5d5;
+    }
+
+    .item .buy-btn {
+      width: 100%;
+      margin-top: 12px;
+      min-height: 36px;
+      font-size: 13px;
+    }
+
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 14px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 5px 9px;
+      font-size: 11px;
+      background: #f1f1ef;
+      color: #626262;
+    }
+
+    .badge.green {
+      background: var(--green-soft);
+      color: var(--green);
+    }
+
+    .badge.orange {
+      background: var(--orange-soft);
+      color: var(--orange);
+    }
+
+    .badge.blue {
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    /* =========================
+       ФУТЕР
+       ========================= */
+    footer {
+      padding: 20px 0 50px;
+      color: var(--muted);
+      font-size: 13px;
+      border-top: 1px solid var(--border);
+    }
+
+    /* =========================
+       МОДАЛЬНОЕ ОКНО
+       ========================= */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.35);
+      display: none;
+      place-items: center;
+      z-index: 50;
+      padding: 20px;
+    }
+
+    .modal-backdrop.open {
+      display: grid;
+    }
+
+    .modal {
+      width: min(520px, 100%);
+      background: var(--surface);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 25px 80px rgba(0,0,0,.18);
+      border: 1px solid var(--border);
+    }
+
+    .modal h2 {
+      margin: 0 0 8px;
+      letter-spacing: -.03em;
+    }
+
+    .modal p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 20px;
+    }
+
+    /* =========================
+       АДАПТИВ
+       ========================= */
+    @media (max-width: 850px) {
+      .hero-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .items {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        width: min(100% - 20px, 1180px);
+      }
+
+      .hero {
+        padding-top: 42px;
+      }
+
+      .topbar-inner {
+        min-height: 58px;
+      }
+
+      .nav {
+        display: none;
+      }
+
+      .hero-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .estimate-head {
+        flex-direction: column;
+      }
+
+      .total {
+        text-align: left;
+      }
+
+      .controls-right {
+        width: 100%;
+      }
+
+      .controls-right .btn,
+      .controls-right .select {
+        flex: 1;
+      }
+    }
+  
+    /* =========================
+       DARK UI / INVENTORY / TRAIN
+       ========================= */
+    body {
+      background:
+        radial-gradient(circle at top left, rgba(110,168,255,.06), transparent 28%),
+        var(--bg);
+    }
+
+    .topbar {
+      background: rgba(15,15,15,.86);
+      border-bottom-color: var(--border);
+    }
+
+    .brand-icon {
+      background: #f5f5f4;
+      color: #111;
+    }
+
+    .nav button {
+      color: var(--muted);
+    }
+
+    .nav button:hover,
+    .btn:hover {
+      background: var(--surface-hover);
+      color: var(--text);
+    }
+
+    .stat,
+    .estimate,
+    .item,
+    .pill,
+    .select,
+    .btn {
+      background: var(--surface);
+      border-color: var(--border);
+      color: var(--text);
+    }
+
+    .stat,
+    .estimate {
+      box-shadow: 0 4px 18px rgba(0,0,0,.12);
+    }
+
+    .estimate:hover {
+      box-shadow: var(--shadow);
+    }
+
+    .estimate.best {
+      border-color: rgba(110,168,255,.48);
+      box-shadow: 0 8px 36px rgba(0,0,0,.28), 0 0 0 1px rgba(110,168,255,.06);
+    }
+
+    .estimate-number,
+    .badge {
+      background: #222220;
+      color: #bcbcb7;
+    }
+
+    .best .estimate-number,
+    .badge.blue {
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .item {
+      background: var(--surface-soft);
+    }
+
+    .item:hover {
+      background: var(--surface-hover);
+    }
+
+    .item.sad {
+      background: var(--danger-soft);
+      border-color: #4d2828;
+    }
+
+    .btn-primary {
+      background: #f5f5f4;
+      color: #111;
+      border-color: #f5f5f4;
+    }
+
+    .btn-primary:hover {
+      background: #fff;
+      color: #111;
+    }
+
+    .badge.green {
+      background: var(--green-soft);
+      color: var(--green);
+    }
+
+    .badge.orange {
+      background: var(--orange-soft);
+      color: var(--orange);
+    }
+
+    .inventory {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 10px;
+    }
+
+    .inventory-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 8px;
+      border-radius: 999px;
+      background: #242422;
+      color: #bcbcb7;
+      font-size: 11px;
+      border: 1px solid #30302d;
+    }
+
+    .inventory-chip strong {
+      color: var(--text);
+    }
+
+    .inventory-chip.low {
+      background: var(--orange-soft);
+      color: var(--orange);
+      border-color: #4a3519;
+    }
+
+    .inventory-chip.none {
+      background: var(--danger-soft);
+      color: var(--danger);
+      border-color: #4d2828;
+    }
+
+    .train-details {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
+    }
+
+    .train-times {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .train-time {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    .train-line {
+      height: 1px;
+      background: var(--border);
+      position: relative;
+    }
+
+    .train-line::after {
+      content: "";
+      position: absolute;
+      right: 0;
+      top: -3px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #555550;
+    }
+
+    .train-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .source-link {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .source-link:hover {
+      text-decoration: underline;
+    }
+
+    .modal {
+      background: var(--surface);
+      border-color: var(--border);
+      color: var(--text);
+    }
+
+    code {
+      background: #222220;
+      padding: 2px 5px;
+      border-radius: 5px;
+    }
+
+    @media (max-width: 600px) {
+      .train-times {
+        grid-template-columns: 1fr;
+        gap: 4px;
+      }
+
+      .train-line {
+        display: none;
+      }
+    }
+
+  </style>
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <div class="brand">
+        <div class="brand-icon">↗</div>
+        <span>Trip Monitor</span>
+      </div>
+
+      <nav class="nav">
+        <button type="button" onclick="scrollToSection('estimates')">Сметы</button>
+        <button type="button" onclick="openSources()">Источники</button>
+        <button type="button" onclick="refreshData()">Обновить</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <div class="eyebrow">
+        <span class="status-dot"></span>
+        Мониторинг открытых источников
+      </div>
+
+      <h1>Ярославль · 4 ноября</h1>
+
+      <p class="hero-text">
+        Варианты поездки на концерт с Meet & Greet и железнодорожными билетами.
+        Сметы автоматически сортируются от самой дешёвой к самой дорогой.
+      </p>
+
+      <div class="hero-grid">
+        <div class="stat">
+          <div class="stat-label">Концерт</div>
+          <div class="stat-value" id="concertStat">—</div>
+        </div>
+
+        <div class="stat">
+          <div class="stat-label">Meet & Greet</div>
+          <div class="stat-value" id="meetStat">—</div>
+        </div>
+
+        <div class="stat">
+          <div class="stat-label">Вологда → Ярославль</div>
+          <div class="stat-value" id="forwardStat">—</div>
+        </div>
+
+        <div class="stat">
+          <div class="stat-label">Ярославль → Вологда</div>
+          <div class="stat-value" id="backStat">—</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="estimates">
+      <div class="controls">
+        <div class="controls-left">
+          <div class="pill">
+            <span>Последняя проверка:</span>
+            <strong id="updatedAt">—</strong>
+          </div>
+
+          <div class="pill">
+            <span>Доступно вариантов:</span>
+            <strong id="countStat">—</strong>
+          </div>
+        </div>
+
+        <div class="controls-right">
+          <select class="select" id="filterSelect" onchange="renderEstimates()">
+            <option value="all">Все варианты</option>
+            <option value="available">Только доступные</option>
+            <option value="sad">С проблемами 😔</option>
+          </select>
+
+          <button class="btn btn-primary" type="button" onclick="refreshData()">
+            ↻ Обновить
+          </button>
+        </div>
+      </div>
+
+      <div class="estimates" id="estimatesList"></div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      Данные должны поступать из открытых источников. Перед покупкой всегда перепроверяйте
+      актуальную цену и наличие на сайте продавца.
+    </div>
+  </footer>
+
+  <!-- Модальное окно -->
+  <div class="modal-backdrop" id="modalBackdrop" onclick="closeModal(event)">
+    <div class="modal">
+      <h2>Источники</h2>
+      <p>
+        Для концерта и Meet & Greet уже стоят ваши прямые TicketsCloud-ссылки.
+        Для поездов ссылка будет подставляться на конкретный найденный билет. Секретные токены и API-ключи не храните
+        в этом HTML — для автоматического мониторинга используйте backend.
+      </p>
+
+      <div class="modal-actions">
+        <button class="btn" type="button" onclick="closeModal()">Закрыть</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ==========================================================
+       1. ССЫЛКИ НА ИСТОЧНИКИ
+       ЗАМЕНИТЕ ИХ НА СВОИ
+       ========================================================== */
+
+    const SOURCES = {
+      // Прямые ссылки на билетные блоки TicketsCloud из вашего сообщения.
+      concert:
+        "https://xxl.tours/#ticketscloud:event=6a88ed1987f4fc3211c63e71&token=eyJhbGciOiJIUzI1NiIsImlzcyI6InRpY2tldHNjbG91ZC5ydSIsInR5cCI6IkpXVCJ9.eyJwIjoiNjg1ZDVhOGJmOWRlMzk0YzkyM2VlZTI2In0.Jqnn0UrJ6FEC4RNaktmo_qq3aPqJ7KL0qDLtDIPrWt4&lang=ru",
+      meet:
+        "https://xxl.tours/#ticketscloud:event=6a8b51218499b6ae95d97510&token=eyJhbGciOiJIUzI1NiIsImlzcyI6InRpY2tldHNjbG91ZC5ydSIsInR5cCI6IkpXVCJ9.eyJwIjoiNjk3MjM5ODg3YTE5NTk0MWEyNTlmYjI2In0.aSxMMWSrnPzxvLGny8Jmjzxi6t4Xx6aYDxy7mHyKwok&lang=ru",
+
+      // Для поездов оставлен адрес РЖД как резервный источник.
+      // В реальном мониторинге сюда автоматически подставляется
+      // ссылка на конкретный найденный поезд/билет.
+      forward:
+        "https://www.rzd.ru/",
+      back:
+        "https://www.rzd.ru/"
+    };
+
+
+    /* ==========================================================
+       2. ДАННЫЕ
+
+       Здесь сейчас демонстрационные значения.
+       В реальном приложении этот массив должен заполняться
+       данными вашего backend/API/парсера.
+
+       price = число или null
+       available = true / false
+       left = сколько осталось
+       buyUrl = прямая ссылка на покупку
+       Для поездов дополнительно:
+       departure / arrival / duration
+       ========================================================== */
+
+    let tripData = [
+      {
+        title: "Вариант поездки",
+        date: "4 ноября · концертный день",
+
+        concert: {
+          price: 2500,
+          available: true,
+          left: 37,
+          label: "Танцпол",
+          buyUrl: SOURCES.concert
+        },
+
+        meet: {
+          price: 4500,
+          available: true,
+          left: 8,
+          label: "Meet & Greet",
+          buyUrl: SOURCES.meet
+        },
+
+        forward: {
+          price: 1100,
+          available: true,
+          left: 12,
+          label: "Поезд 145Я · сидячий",
+          departure: "08:10",
+          arrival: "11:42",
+          duration: "3 ч 32 мин",
+          buyUrl: SOURCES.forward
+        },
+
+        back: {
+          price: 1250,
+          available: true,
+          left: 9,
+          label: "Поезд 076Я · плацкарт",
+          departure: "22:48",
+          arrival: "02:31",
+          duration: "3 ч 43 мин",
+          buyUrl: SOURCES.back
+        },
+
+        tags: ["Самый дешёвый", "Все позиции доступны"]
+      },
+
+      {
+        title: "Вариант поездки",
+        date: "4 ноября · концертный день",
+
+        concert: {
+          price: 2900,
+          available: true,
+          left: 21,
+          label: "Танцпол",
+          buyUrl: SOURCES.concert
+        },
+
+        meet: {
+          price: 4500,
+          available: true,
+          left: 5,
+          label: "Meet & Greet",
+          buyUrl: SOURCES.meet
+        },
+
+        forward: {
+          price: 900,
+          available: true,
+          left: 6,
+          label: "Поезд 081М · плацкарт",
+          departure: "06:35",
+          arrival: "10:27",
+          duration: "3 ч 52 мин",
+          buyUrl: SOURCES.forward
+        },
+
+        back: {
+          price: 1600,
+          available: true,
+          left: 4,
+          label: "Поезд 046В · купе",
+          departure: "23:14",
+          arrival: "03:08",
+          duration: "3 ч 54 мин",
+          buyUrl: SOURCES.back
+        },
+
+        tags: ["Оптимальный баланс"]
+      },
+
+      {
+        title: "Вариант поездки",
+        date: "4 ноября · концертный день",
+
+        concert: {
+          price: 3300,
+          available: true,
+          left: 14,
+          label: "Танцпол",
+          buyUrl: SOURCES.concert
+        },
+
+        meet: {
+          price: 4200,
+          available: true,
+          left: 3,
+          label: "Meet & Greet",
+          buyUrl: SOURCES.meet
+        },
+
+        forward: {
+          price: 1300,
+          available: true,
+          left: 18,
+          label: "Поезд 376Я · купе",
+          departure: "09:05",
+          arrival: "12:18",
+          duration: "3 ч 13 мин",
+          buyUrl: SOURCES.forward
+        },
+
+        back: {
+          price: 1500,
+          available: true,
+          left: 11,
+          label: "Поезд 043В · плацкарт",
+          departure: "22:20",
+          arrival: "02:02",
+          duration: "3 ч 42 мин",
+          buyUrl: SOURCES.back
+        },
+
+        tags: ["Хорошее место"]
+      },
+
+      {
+        title: "Вариант поездки",
+        date: "4 ноября · концертный день",
+
+        concert: {
+          price: 3700,
+          available: true,
+          left: 7,
+          label: "Танцпол",
+          buyUrl: SOURCES.concert
+        },
+
+        meet: {
+          price: 5000,
+          available: true,
+          left: 2,
+          label: "Meet & Greet",
+          buyUrl: SOURCES.meet
+        },
+
+        forward: {
+          price: 900,
+          available: true,
+          left: 2,
+          label: "Поезд 081М · плацкарт",
+          departure: "06:35",
+          arrival: "10:27",
+          duration: "3 ч 52 мин",
+          buyUrl: SOURCES.forward
+        },
+
+        back: {
+          price: 1400,
+          available: true,
+          left: 6,
+          label: "Поезд 076Я · плацкарт",
+          departure: "22:48",
+          arrival: "02:31",
+          duration: "3 ч 43 мин",
+          buyUrl: SOURCES.back
+        },
+
+        tags: ["Быстрый вариант"]
+      },
+
+      {
+        title: "Вариант поездки",
+        date: "4 ноября · концертный день",
+
+        concert: {
+          price: 4100,
+          available: true,
+          left: 4,
+          label: "Танцпол",
+          buyUrl: SOURCES.concert
+        },
+
+        meet: {
+          price: 4500,
+          available: true,
+          left: 1,
+          label: "Meet & Greet",
+          buyUrl: SOURCES.meet
+        },
+
+        forward: {
+          price: 1000,
+          available: true,
+          left: 3,
+          label: "Поезд 145Я · сидячий",
+          departure: "08:10",
+          arrival: "11:42",
+          duration: "3 ч 32 мин",
+          buyUrl: SOURCES.forward
+        },
+
+        back: {
+          price: 1500,
+          available: true,
+          left: 5,
+          label: "Поезд 043В · плацкарт",
+          departure: "22:20",
+          arrival: "02:02",
+          duration: "3 ч 42 мин",
+          buyUrl: SOURCES.back
+        },
+
+        tags: ["Поздний выезд"]
+      },
+
+      {
+        title: "Вариант поездки",
+        date: "4 ноября · концертный день",
+
+        concert: {
+          price: 2700,
+          available: true,
+          left: 18,
+          label: "Танцпол",
+          buyUrl: SOURCES.concert
+        },
+
+        meet: {
+          price: null,
+          available: false,
+          left: 0,
+          label: "Meet & Greet",
+          buyUrl: SOURCES.meet
+        },
+
+        forward: {
+          price: 1000,
+          available: true,
+          left: 8,
+          label: "Поезд 145Я · сидячий",
+          departure: "08:10",
+          arrival: "11:42",
+          duration: "3 ч 32 мин",
+          buyUrl: SOURCES.forward
+        },
+
+        back: {
+          price: 1500,
+          available: true,
+          left: 7,
+          label: "Поезд 076Я · плацкарт",
+          departure: "22:48",
+          arrival: "02:31",
+          duration: "3 ч 43 мин",
+          buyUrl: SOURCES.back
+        },
+
+        tags: ["Meet закончились 😔"]
+      },
+
+      {
+        title: "Вариант поездки",
+        date: "4 ноября · концертный день",
+
+        concert: {
+          price: null,
+          available: false,
+          left: 0,
+          label: "Танцпол",
+          buyUrl: SOURCES.concert
+        },
+
+        meet: {
+          price: 4500,
+          available: true,
+          left: 5,
+          label: "Meet & Greet",
+          buyUrl: SOURCES.meet
+        },
+
+        forward: {
+          price: 1000,
+          available: true,
+          left: 8,
+          label: "Поезд 145Я · сидячий",
+          departure: "08:10",
+          arrival: "11:42",
+          duration: "3 ч 32 мин",
+          buyUrl: SOURCES.forward
+        },
+
+        back: {
+          price: 1500,
+          available: true,
+          left: 7,
+          label: "Поезд 076Я · плацкарт",
+          departure: "22:48",
+          arrival: "02:31",
+          duration: "3 ч 43 мин",
+          buyUrl: SOURCES.back
+        },
+
+        tags: ["Билеты на концерт закончились 😔"]
+      },
+
+      {
+        title: "Вариант поездки",
+        date: "4 ноября · концертный день",
+
+        concert: {
+          price: 3600,
+          available: true,
+          left: 9,
+          label: "Танцпол",
+          buyUrl: SOURCES.concert
+        },
+
+        meet: {
+          price: 4900,
+          available: true,
+          left: 4,
+          label: "Meet & Greet",
+          buyUrl: SOURCES.meet
+        },
+
+        forward: {
+          price: null,
+          available: false,
+          left: 0,
+          label: "Поезд 081М · плацкарт",
+          departure: "—",
+          arrival: "—",
+          duration: "мест нет",
+          buyUrl: SOURCES.forward
+        },
+
+        back: {
+          price: 1500,
+          available: true,
+          left: 10,
+          label: "Поезд 043В · плацкарт",
+          departure: "22:20",
+          arrival: "02:02",
+          duration: "3 ч 42 мин",
+          buyUrl: SOURCES.back
+        },
+
+        tags: ["Нет билета туда 😔"]
+      },
+
+      {
+        title: "Вариант поездки",
+        date: "4 ноября · концертный день",
+
+        concert: {
+          price: 3200,
+          available: true,
+          left: 13,
+          label: "Танцпол",
+          buyUrl: SOURCES.concert
+        },
+
+        meet: {
+          price: 5200,
+          available: true,
+          left: 2,
+          label: "Meet & Greet",
+          buyUrl: SOURCES.meet
+        },
+
+        forward: {
+          price: 1100,
+          available: true,
+          left: 12,
+          label: "Поезд 145Я · сидячий",
+          departure: "08:10",
+          arrival: "11:42",
+          duration: "3 ч 32 мин",
+          buyUrl: SOURCES.forward
+        },
+
+        back: {
+          price: null,
+          available: false,
+          left: 0,
+          label: "Поезд 043В · плацкарт",
+          departure: "—",
+          arrival: "—",
+          duration: "мест нет",
+          buyUrl: SOURCES.back
+        },
+
+        tags: ["Нет билета обратно 😔"]
+      },
+
+      {
+        title: "Вариант поездки",
+        date: "4 ноября · концертный день",
+
+        concert: {
+          price: 4500,
+          available: true,
+          left: 5,
+          label: "Танцпол",
+          buyUrl: SOURCES.concert
+        },
+
+        meet: {
+          price: 5600,
+          available: true,
+          left: 6,
+          label: "Meet & Greet",
+          buyUrl: SOURCES.meet
+        },
+
+        forward: {
+          price: 1200,
+          available: true,
+          left: 6,
+          label: "Поезд 376Я · купе",
+          departure: "09:05",
+          arrival: "12:18",
+          duration: "3 ч 13 мин",
+          buyUrl: SOURCES.forward
+        },
+
+        back: {
+          price: 1800,
+          available: true,
+          left: 3,
+          label: "Поезд 046В · купе",
+          departure: "23:14",
+          arrival: "03:08",
+          duration: "3 ч 54 мин",
+          buyUrl: SOURCES.back
+        },
+
+        tags: ["Премиум"]
+      }
+    ];
+
+
+    /* ==========================================================
+       3. РАБОТА С ДАННЫМИ
+       ========================================================== */
+
+    function money(value) {
+      if (value === null || value === undefined) {
+        return "😔";
+      }
+
+      return new Intl.NumberFormat("ru-RU").format(value) + " ₽";
+    }
+
+    function getItemTotal(item) {
+      const items = ["concert", "meet", "forward", "back"];
+
+      if (items.some(key => !item[key].available || item[key].price === null)) {
+        return null;
+      }
+
+      return items.reduce((sum, key) => sum + item[key].price, 0);
+    }
+
+    function sortData() {
+      tripData.sort((a, b) => {
+        const totalA = getItemTotal(a);
+        const totalB = getItemTotal(b);
+
+        if (totalA === null && totalB === null) return 0;
+        if (totalA === null) return 1;
+        if (totalB === null) return -1;
+
+        return totalA - totalB;
+      });
+    }
+
+
+    /* ==========================================================
+       4. СОЗДАНИЕ ОДНОЙ КАРТОЧКИ
+       ========================================================== */
+
+    function renderItem(item, type) {
+      const typeNames = {
+        concert: "🎤 Концерт",
+        meet: "🤝 Meet & Greet",
+        forward: "🚆 Поезд туда",
+        back: "🚆 Поезд обратно"
+      };
+
+      const isTrain = type === "forward" || type === "back";
+      const isAvailable = item.available && item.price !== null;
+      const inventoryText = item.left === null || item.left === undefined
+        ? "остаток неизвестен"
+        : item.left === 0
+          ? "мест нет"
+          : `осталось ${item.left}`;
+
+      const inventoryClass =
+        item.left === 0 ? "none" :
+        item.left !== null && item.left <= 3 ? "low" : "";
+
+      const buyUrl = item.buyUrl || SOURCES[type];
+
+      return `
+        <div class="item ${isAvailable ? "" : "sad"}">
+          <div class="item-top">
+            <div>
+              <div class="item-title">${typeNames[type]}</div>
+              <div class="item-meta">${item.label}</div>
+            </div>
+
+            <div class="item-value">
+              ${money(item.price)}
+            </div>
+          </div>
+
+          <div class="inventory">
+            <span class="inventory-chip ${inventoryClass}">
+              ${item.left === 0 ? "😔" : "🎟️"}
+              <strong>${inventoryText}</strong>
+            </span>
+          </div>
+
+          ${
+            isTrain
+              ? `
+                <div class="train-details">
+                  <div class="train-times">
+                    <span class="train-time">${item.departure}</span>
+                    <span class="train-line"></span>
+                    <span class="train-time">${item.arrival}</span>
+                  </div>
+
+                  <div class="train-meta">
+                    <span>отправление → прибытие</span>
+                    <strong>${item.duration}</strong>
+                  </div>
+                </div>
+              `
+              : ""
+          }
+
+          <a
+            class="btn buy-btn ${isAvailable ? "btn-primary" : ""}"
+            href="${buyUrl}"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            ${isAvailable ? "Купить билет ↗" : "Открыть источник ↗"}
+          </a>
+        </div>
+      `;
+    }
+
+
+    /* ==========================================================
+       5. ОТОБРАЖЕНИЕ КАРТОЧЕК
+       ========================================================== */
+
+    function renderEstimates() {
+      const list = document.getElementById("estimatesList");
+      const filter = document.getElementById("filterSelect").value;
+
+      sortData();
+
+      const filtered = tripData.filter(item => {
+        const total = getItemTotal(item);
+
+        if (filter === "available") return total !== null;
+        if (filter === "sad") return total === null;
+
+        return true;
+      });
+
+      document.getElementById("countStat").textContent =
+        filtered.length;
+
+      if (!filtered.length) {
+        list.innerHTML = `
+          <div class="estimate">
+            <div class="estimate-body">
+              Ничего не найдено.
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      list.innerHTML = filtered.map((item, index) => {
+        const total = getItemTotal(item);
+        const best = index === 0 && total !== null;
+
+        return `
+          <article class="estimate ${best ? "best" : ""}">
+            <div class="estimate-head">
+              <div>
+                <div class="estimate-number">
+                  №${String(index + 1).padStart(2, "0")}
+                </div>
+
+                <h2 class="estimate-title">
+                  ${item.title}
+                </h2>
+
+                <p class="estimate-subtitle">
+                  ${item.date}
+                </p>
+              </div>
+
+              <div class="total">
+                <div class="total-label">
+                  ${total === null ? "Итог" : "Полная стоимость"}
+                </div>
+
+                <div class="total-value">
+                  ${total === null ? "😔" : money(total)}
+                </div>
+              </div>
+            </div>
+
+            <div class="estimate-body">
+              <div class="items">
+                ${renderItem(item.concert, "concert")}
+                ${renderItem(item.meet, "meet")}
+                ${renderItem(item.forward, "forward")}
+                ${renderItem(item.back, "back")}
+              </div>
+
+              <div class="badges">
+                ${item.tags.map((tag, i) => `
+                  <span class="badge ${best && i === 0 ? "blue" : ""}">
+                    ${tag}
+                  </span>
+                `).join("")}
+
+                ${
+                  total !== null
+                    ? `<span class="badge green">Доступно всё</span>`
+                    : `<span class="badge orange">Есть проблемы 😔</span>`
+                }
+              </div>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+
+    /* ==========================================================
+       6. ВЕРХНИЕ СТАТИСТИКИ
+       ========================================================== */
+
+    function renderStats() {
+      const findCheapest = key => {
+        const available = tripData
+          .map(x => x[key])
+          .filter(x => x.available && x.price !== null)
+          .map(x => x.price);
+
+        return available.length ? Math.min(...available) : null;
+      };
+
+      document.getElementById("concertStat").textContent =
+        money(findCheapest("concert"));
+
+      document.getElementById("meetStat").textContent =
+        money(findCheapest("meet"));
+
+      document.getElementById("forwardStat").textContent =
+        money(findCheapest("forward"));
+
+      document.getElementById("backStat").textContent =
+        money(findCheapest("back"));
+
+      document.getElementById("updatedAt").textContent =
+        new Date().toLocaleString("ru-RU");
+    }
+
+
+    /* ==========================================================
+       7. ОБНОВЛЕНИЕ
+
+       Сейчас это локальное обновление интерфейса.
+       Для настоящего мониторинга здесь можно сделать fetch()
+       к вашему backend API.
+       ========================================================== */
+
+    async function refreshData() {
+      document.getElementById("updatedAt").textContent = "обновляем…";
+
+      /*
+        ПРИМЕР ПОДКЛЮЧЕНИЯ К ВАШЕМУ BACKEND:
+
+        const response = await fetch("/api/trips");
+        const data = await response.json();
+
+        tripData = data;
+
+        Затем:
+        renderStats();
+        renderEstimates();
+
+        Важно: секретные токены сайтов не храните в этом HTML.
+        Они должны находиться на сервере.
+      */
+
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      renderStats();
+      renderEstimates();
+    }
+
+
+    /* ==========================================================
+       8. МОДАЛЬНОЕ ОКНО
+       ========================================================== */
+
+    function openSources() {
+      document.getElementById("modalBackdrop").classList.add("open");
+    }
+
+    function closeModal(event) {
+      if (
+        !event ||
+        event.target === document.getElementById("modalBackdrop")
+      ) {
+        document.getElementById("modalBackdrop").classList.remove("open");
+      }
+    }
+
+
+    /* ==========================================================
+       9. ПРОКРУТКА
+       ========================================================== */
+
+    function scrollToSection(id) {
+      document.getElementById(id)?.scrollIntoView({
+        behavior: "smooth"
+      });
+    }
+
+
+    /* ==========================================================
+       10. ESC ДЛЯ ЗАКРЫТИЯ
+       ========================================================== */
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape") {
+        closeModal();
+      }
+    });
+
+
+    /* ==========================================================
+       11. ЗАПУСК
+       ========================================================== */
+
+    renderStats();
+    renderEstimates();
+
+    /*
+      ВАЖНО:
+      Значения left/price/время в примере — демонстрационные.
+      Чтобы сайт показывал реальные остатки, цены и расписание,
+      замените tripData результатом API/backend-сборщика.
+
+      Пример:
+        const response = await fetch("/api/trips");
+        tripData = await response.json();
+        renderStats();
+        renderEstimates();
+
+      Прямые ссылки на конкретную покупку можно передавать
+      в поле buyUrl для каждого элемента.
+    */
+  </script>
+</body>
+</html>
